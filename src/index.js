@@ -29,7 +29,7 @@ function oneCountryInfo({ flags, name, capital, population, languages }) {
         <div class="box">
           <img class="img" src="${flags.svg}" alt="${
     name.official
-  }" width="50" />
+  }" width="100" />
           <h2 class="name">${name.official}</h2>
         </div>
         <p class="capital"><span class="country-info__weight">Capital:</span> ${capital}</p>
@@ -44,7 +44,7 @@ function oneCountryInfo({ flags, name, capital, population, languages }) {
 function oneCountryList({ flags, name }) {
   return `
     <li class="list-item">
-      <img class="list-item__img" src="${flags.svg}" alt="${name.official}" width="250" />
+      <img class="list-item__img" src="${flags.svg}" alt="${name.official}" width="200" />
       <h2 class="list-item__name">${name.official}</h2>
     </li>
     `;
@@ -54,7 +54,7 @@ function returnedCountries(countries) {
   if (countries.status === 404) {
     countryList.innerHTML = '';
     countryInfo.innerHTML = '';
-    Notify.failure('Oops, there is no country with that ');
+    Notify.failure('Oops, there is no country with that name');
   }
   if (countries.length >= 1 && countries.length < 10) {
     const markup = countries.map(country => oneCountryList(country));
