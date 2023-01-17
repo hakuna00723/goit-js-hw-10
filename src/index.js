@@ -14,13 +14,14 @@ searchCountry.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 function onSearch(evt) {
   evt.preventDefault();
   const searchCountryValue = searchCountry.value.trim();
-  fetchCountries(searchCountryValue)
-    .then(returnedCountries)
-    .catch(error => {
-      Notify.failure('Oops, there is no country with that name');
-      countryList.innerHTML = '';
-      countryInfo.innerHTML = '';
-    });
+  if (searchCountryValue) {
+    fetchCountries(searchCountryValue)
+      .then(returnedCountries)
+      .catch(error => {
+        Notify.failure('Oops, there is no country with that name');
+        clearContent();
+      });
+  }
 }
 
 function oneCountryInfo({ flags, name, capital, population, languages }) {
@@ -32,9 +33,9 @@ function oneCountryInfo({ flags, name, capital, population, languages }) {
   }" width="100" />
           <h2 class="name">${name.official}</h2>
         </div>
-        <p class="capital"><span class="country-info__weight">Capital:</span> ${capital}</p>
-        <p class="population"><span class="country-info__weight">Population:</span> ${population}</p>
-        <p class="languages"><span class="country-info__weight">Languages:</span> ${Object.values(
+        <p class="capital"><span class="capital-part">Capital:</span> ${capital}</p>
+        <p class="population"><span class="population-part">Population:</span> ${population}</p>
+        <p class="languages"><span class="languages-part">Languages:</span> ${Object.values(
           languages
         )}</p>
       </div>
@@ -50,23 +51,32 @@ function oneCountryList({ flags, name }) {
     `;
 }
 
-function returnedCountries(countries) {
-  if (countries.status === 404) {
-    countryList.innerHTML = '';
-    countryInfo.innerHTML = '';
+function returnedCountries(countryList) {
+  clearContent();
+  if (countryList.status === 404) {
+    clearContent();
     Notify.failure('Oops, there is no country with that name');
   }
-  if (countries.length >= 1 && countries.length < 10) {
-    const markup = countries.map(country => oneCountryList(country));
+  if (countryList.length >= 1 && countryList.length < 10) {
+    const markup = countryList.map(country => oneCountryList(country));
     countryInfo.innerHTML = markup.join('');
     countryList.innerHTML = '';
   }
-  if (countries.length === 1) {
-    const markup = countries.map(country => oneCountryInfo(country));
+  if (countryList.length === 1) {
+    const markup = countryList.map(country => oneCountryInfo(country));
     countryInfo.innerHTML = markup.join('');
     countryList.innerHTML = '';
   }
-  if (countries.length >= 10) {
+  if (countryList.length >= 10) {
     Notify.info('Too many matches found. Please enter a more specific name.');
+  }
+}
+
+function clearContent() {
+  if (countryList.innerHTML) {
+    countryList.innerHTML = '';
+  }
+  if (countryInfo.innerHTML) {
+    countryInfo.innerHTML = '';
   }
 }
